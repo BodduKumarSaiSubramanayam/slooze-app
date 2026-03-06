@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: slooze-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma db push && npx ts-node prisma/seed.ts && npm run start:prod
+    envVars:
+      - key: DATABASE_URL
+        value: file:./dev.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 3001

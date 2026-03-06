@@ -1,0 +1,117 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthPayload {
+  access_token: String!
+  user: User!
+}
+
+input CreateOrderInput {
+  items: [OrderItemInput!]!
+}
+
+input CreatePaymentMethodInput {
+  details: String!
+  type: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type MenuItem {
+  category: String!
+  id: String!
+  name: String!
+  price: Float!
+  restaurantId: String!
+}
+
+type Mutation {
+  addPaymentMethod(input: CreatePaymentMethodInput!): PaymentMethod!
+  cancelOrder(orderId: String!): Order!
+  createOrder(input: CreateOrderInput!): Order!
+  login(loginInput: LoginInput!): AuthPayload!
+  rateMenuItem(input: RateItemInput!): RatingResult!
+  signup(signupInput: SignupInput!): AuthPayload!
+  updateOrderStatus(orderId: String!, status: String!): Order!
+}
+
+type Order {
+  createdAt: String
+  id: String!
+  items: [OrderItem!]
+  status: String!
+  totalAmount: Float!
+  user: User
+  userId: String!
+}
+
+type OrderItem {
+  id: String!
+  menuItem: MenuItem!
+  menuItemId: String!
+  orderId: String!
+  quantity: Int!
+}
+
+input OrderItemInput {
+  menuItemId: String!
+  quantity: Int!
+}
+
+type PaymentMethod {
+  details: String!
+  id: String!
+  type: String!
+  userId: String!
+}
+
+type Query {
+  getAllOrders: [Order!]!
+  getMenuItemRating(menuItemId: String!): RatingResult!
+  me: User!
+  myOrders: [Order!]!
+  myPaymentMethods: [PaymentMethod!]!
+  restaurant(id: String!): Restaurant
+  restaurants: [Restaurant!]!
+}
+
+input RateItemInput {
+  menuItemId: String!
+  score: Int!
+}
+
+type RatingResult {
+  averageRating: Float!
+  menuItemId: String!
+  totalRatings: Int!
+  userRating: Int
+}
+
+type Restaurant {
+  category: String!
+  country: String!
+  id: String!
+  menuItems: [MenuItem!]
+  name: String!
+}
+
+input SignupInput {
+  country: String!
+  email: String!
+  name: String!
+  password: String!
+  role: String!
+}
+
+type User {
+  country: String!
+  email: String!
+  id: String!
+  name: String!
+  role: String!
+  sloozeCoins: Float!
+}

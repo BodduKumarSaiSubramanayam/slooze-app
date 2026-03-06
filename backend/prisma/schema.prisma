@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id            String          @id @default(uuid())
+  email         String          @unique
+  password      String
+  name          String
+  role          String          // "ADMIN", "MANAGER", "MEMBER"
+  country       String          // "INDIA", "AMERICA"
+  orders        Order[]
+  paymentMethods PaymentMethod[]
+  sloozeCoins   Int             @default(0)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+model Restaurant {
+  id        String     @id @default(uuid())
+  name      String
+  country   String     // "INDIA", "AMERICA"
+  category  String     @default("General") // e.g. "Pizza", "Indian", "Desserts"
+  menuItems MenuItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model MenuItem {
+  id           String     @id @default(uuid())
+  name         String
+  price        Float
+  category     String     @default("General") // e.g., "Starters", "Main Course", "Beverages"
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orderItems   OrderItem[]
+  ratings      Rating[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Rating {
+  id         String   @id @default(uuid())
+  score      Int      // 1-5
+  userId     String
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, menuItemId])
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  status      String      @default("PENDING") // "PENDING", "PLACED", "CANCELLED"
+  totalAmount Float
+  items       OrderItem[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity   Int
+}
+
+model PaymentMethod {
+  id      String @id @default(uuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type    String // e.g., "CREDIT_CARD", "UPI"
+  details String // Mock details
+}
